@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>Prabhu Goduuu Calculator</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#f8fafc;background:#0f172a}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:22px 14px;display:flex;justify-content:center;align-items:center}
+.app{width:min(100%,430px);padding:22px;border:1px solid #334155;border-radius:24px;background:#172033;box-shadow:0 20px 60px #0005}
+.brand{text-align:center;padding:12px 8px 20px;border-bottom:1px solid #334155}
+.brand .line{color:#64748b;letter-spacing:1px}
+h1{font-size:1.55rem;margin:10px 0 4px}
+.sub{color:#cbd5e1;font-size:.9rem;margin:0}
+h2{font-size:1rem;margin:22px 0 12px}
+.operations{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.op{border:1px solid #475569;background:#1e293b;color:#e2e8f0;padding:13px 10px;border-radius:12px;font-size:1rem;text-align:left}
+.op.active{border-color:#38bdf8;background:#082f49;color:#bae6fd}
+label{display:block;font-size:.92rem;font-weight:600;margin:15px 0 7px}
+input{width:100%;padding:14px;border:1px solid #475569;border-radius:11px;background:#0f172a;color:white;font-size:1.05rem}
+button.calculate{width:100%;border:0;border-radius:12px;background:#0284c7;color:white;padding:15px;font-size:1rem;font-weight:750;margin-top:18px}
+.result{padding:15px;margin-top:16px;border-radius:12px;background:#0b1220;border:1px solid #334155;min-height:58px;overflow-wrap:anywhere}
+.result strong{display:block;color:#7dd3fc;margin-bottom:5px}
+.error{color:#fca5a5!important}
+.footer{text-align:center;color:#94a3b8;font-size:.78rem;margin:17px 0 0}
+#exit{background:#334155;color:#e2e8f0;border:0;border-radius:10px;padding:11px 14px;margin-top:12px;width:100%}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="brand">
+    <div class="line">===================================</div>
+    <h1>PRABHU GODUUU</h1>
+    <p class="sub">Simple &amp; Good Python Calculator</p>
+    <div class="line">===================================</div>
+  </header>
+  <h2>Select Operation:</h2>
+  <div class="operations" role="group" aria-label="Select operation">
+    <button class="op active" data-op="1">1. Addition (+)</button>
+    <button class="op" data-op="2">2. Subtraction (-)</button>
+    <button class="op" data-op="3">3. Multiplication (*)</button>
+    <button class="op" data-op="4">4. Division (/)</button>
+  </div>
+  <form id="calcForm">
+    <label for="num1">Enter first number:</label>
+    <input id="num1" type="number" step="any" inputmode="decimal" placeholder="Enter first number" required>
+    <label for="num2">Enter second number:</label>
+    <input id="num2" type="number" step="any" inputmode="decimal" placeholder="Enter second number" required>
+    <button class="calculate" type="submit">Calculate Result</button>
+  </form>
+  <div id="result" class="result" role="status" aria-live="polite">Choose an operation and enter two numbers.</div>
+  <button id="exit" type="button">5. Exit Calculator / Reset</button>
+  <p class="footer">Thanks for using Prabhu Goduuu Calculator 👋</p>
+</main>
+<script>
+function add(x, y) { return x + y; }
+function subtract(x, y) { return x - y; }
+function multiply(x, y) { return x * y; }
+function divide(x, y) {
+  if (y === 0) return "Error! Division by zero is not allowed.";
+  return x / y;
+}
+let choice = "1";
+const resultBox = document.getElementById("result");
+document.querySelectorAll("[data-op]").forEach(button => {
+  button.addEventListener("click", () => {
+    choice = button.dataset.op;
+    document.querySelectorAll("[data-op]").forEach(b => b.classList.toggle("active", b === button));
+  });
+});
+document.getElementById("calcForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const first = document.getElementById("num1").value.trim();
+  const second = document.getElementById("num2").value.trim();
+  if (first === "" || second === "") {
+    resultBox.innerHTML = '<strong class="error">❌ Invalid input!</strong>Please enter valid numbers only.';
+    return;
+  }
+  const num1 = Number(first), num2 = Number(second);
+  let symbol, value;
+  if (choice === "1") { symbol = "+"; value = add(num1, num2); }
+  else if (choice === "2") { symbol = "-"; value = subtract(num1, num2); }
+  else if (choice === "3") { symbol = "*"; value = multiply(num1, num2); }
+  else { symbol = "/"; value = divide(num1, num2); }
+  resultBox.replaceChildren();
+  const heading = document.createElement("strong");
+  heading.textContent = "Result:";
+  if (typeof value === "string") heading.className = "error";
+  resultBox.append(heading, document.createTextNode(`${num1} ${symbol} ${num2} = ${value}`));
+});
+document.getElementById("exit").addEventListener("click", () => {
+  document.getElementById("calcForm").reset();
+  choice = "1";
+  document.querySelectorAll("[data-op]").forEach((b, i) => b.classList.toggle("active", i === 0));
+  resultBox.textContent = "Calculator reset. Thank you for using Calculator! Bye 👋";
+});
+</script>
+</body>
+</html>
